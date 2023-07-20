@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -14,52 +17,64 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("user")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("user")]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("user")]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("user")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("user")]
     private ?string $password_hash = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("user")]
     private ?string $address = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("user")]
     private ?string $city = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("user")]
     private ?string $province = null;
 
     #[ORM\Column(length: 10, nullable: true)]
+    #[Groups("user")]
     private ?string $postal_code = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups("user")]
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("user")]
     private ?\DateTimeInterface $birth_date = null;
 
-    #[ORM\Column]
-    private ?int $library_id = null;
-
     #[ORM\Column(nullable: true)]
+    #[Groups("user")]
     private ?int $reputation = null;
 
     #[ORM\Column]
+    #[Groups("user")]
     private ?bool $blocked = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Library $library_id_fk = null;
+    #[Assert\NotNull(message: "Library cannot be null, make sure that the provided library exists in the database.")]    
+    private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'user_id_fk', targetEntity: Loan::class)]
+    #[Groups("user")]
     private Collection $loans;
 
     public function __construct()
@@ -192,18 +207,6 @@ class User
         return $this;
     }
 
-    public function getLibraryId(): ?int
-    {
-        return $this->library_id;
-    }
-
-    public function setLibraryId(int $library_id): static
-    {
-        $this->library_id = $library_id;
-
-        return $this;
-    }
-
     public function getReputation(): ?int
     {
         return $this->reputation;
@@ -228,14 +231,14 @@ class User
         return $this;
     }
 
-    public function getLibraryIdFk(): ?Library
+    public function getLibrary(): ?Library
     {
-        return $this->library_id_fk;
+        return $this->library;
     }
 
-    public function setLibraryIdFk(?Library $library_id_fk): static
+    public function setLibrary(?Library $library): static
     {
-        $this->library_id_fk = $library_id_fk;
+        $this->library = $library;
 
         return $this;
     }
@@ -269,4 +272,11 @@ class User
 
         return $this;
     }
+
+    #[Groups("user")]
+    public function getLibraryId(): ?int
+    {
+        return $this->library->getId();
+    }
+
 }

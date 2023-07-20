@@ -34,11 +34,8 @@ class Book
     #[ORM\Column(nullable: true)]
     private ?int $page_count = null;
 
-    #[ORM\Column]
-    private ?int $library_id = null;
-
     #[ORM\ManyToOne(inversedBy: 'books')]
-    private ?Library $library_id_fk = null;
+    private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'book_id_fk', targetEntity: Loan::class)]
     private Collection $loans;
@@ -129,26 +126,14 @@ class Book
         return $this;
     }
 
-    public function getLibraryId(): ?int
+    public function getLibrary(): ?Library
     {
-        return $this->library_id;
+        return $this->library;
     }
 
-    public function setLibraryId(int $library_id): static
+    public function setLibrary(?Library $library): static
     {
-        $this->library_id = $library_id;
-
-        return $this;
-    }
-
-    public function getLibraryIdFk(): ?Library
-    {
-        return $this->library_id_fk;
-    }
-
-    public function setLibraryIdFk(?Library $library_id_fk): static
-    {
-        $this->library_id_fk = $library_id_fk;
+        $this->library = $library;
 
         return $this;
     }

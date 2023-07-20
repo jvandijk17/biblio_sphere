@@ -6,6 +6,7 @@ use App\Repository\LibraryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LibraryRepository::class)]
 class Library
@@ -13,27 +14,35 @@ class Library
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("library")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("library")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("library")]
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("library")]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("library")]
     private ?string $province = null;
 
     #[ORM\Column(length: 10, nullable: true)]
+    #[Groups("library")]
     private ?string $postal_code = null;
 
-    #[ORM\OneToMany(mappedBy: 'library_id_fk', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'library', targetEntity: User::class)]
+    #[Groups("library")]
     private Collection $users;
 
-    #[ORM\OneToMany(mappedBy: 'library_id_fk', targetEntity: Book::class)]
+    #[ORM\OneToMany(mappedBy: 'library', targetEntity: Book::class)]
+    #[Groups("library")]
     private Collection $books;
 
     public function __construct()
@@ -119,7 +128,7 @@ class Library
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->setLibraryIdFk($this);
+            $user->setLibrary($this);
         }
 
         return $this;
@@ -129,8 +138,8 @@ class Library
     {
         if ($this->users->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($user->getLibraryIdFk() === $this) {
-                $user->setLibraryIdFk(null);
+            if ($user->getLibrary() === $this) {
+                $user->setLibrary(null);
             }
         }
 
@@ -149,7 +158,7 @@ class Library
     {
         if (!$this->books->contains($book)) {
             $this->books->add($book);
-            $book->setLibraryIdFk($this);
+            $book->setLibrary($this);
         }
 
         return $this;
@@ -159,8 +168,8 @@ class Library
     {
         if ($this->books->removeElement($book)) {
             // set the owning side to null (unless already changed)
-            if ($book->getLibraryIdFk() === $this) {
-                $book->setLibraryIdFk(null);
+            if ($book->getLibrary() === $this) {
+                $book->setLibrary(null);
             }
         }
 
