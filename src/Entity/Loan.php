@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LoanRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LoanRepository::class)]
 class Loan
@@ -12,53 +13,25 @@ class Loan
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $user_id = null;
-
-    #[ORM\Column]
-    private ?int $book_id = null;
+    private ?int $id = null;    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups("loan")]
     private ?\DateTimeInterface $loan_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("loan")]
     private ?\DateTimeInterface $return_date = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
-    private ?User $user_id_fk = null;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
-    private ?Book $book_id_fk = null;
+    private ?Book $book = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(int $user_id): static
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
-
-    public function getBookId(): ?int
-    {
-        return $this->book_id;
-    }
-
-    public function setBookId(int $book_id): static
-    {
-        $this->book_id = $book_id;
-
-        return $this;
     }
 
     public function getLoanDate(): ?\DateTimeInterface
@@ -85,27 +58,40 @@ class Loan
         return $this;
     }
 
-    public function getUserIdFk(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id_fk;
+        return $this->user;
     }
 
-    public function setUserIdFk(?User $user_id_fk): static
+    public function setUser(?User $user): static
     {
-        $this->user_id_fk = $user_id_fk;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getBookIdFk(): ?Book
+    public function getBook(): ?Book
     {
-        return $this->book_id_fk;
+        return $this->book;
     }
 
-    public function setBookIdFk(?Book $book_id_fk): static
+    public function setBook(?Book $book): static
     {
-        $this->book_id_fk = $book_id_fk;
+        $this->book = $book;
 
         return $this;
     }
+
+    #[Groups("loan")]
+    public function getBookId(?Book $book): ?int
+    {
+        return $this->book->getId();
+    }
+
+    #[Groups("loan")]
+    public function getUserId(?User $user): ?int
+    {
+        return $this->user->getId();
+    }
+
 }

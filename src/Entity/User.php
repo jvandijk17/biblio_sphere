@@ -73,7 +73,7 @@ class User
     #[Assert\NotNull(message: "Library cannot be null, make sure that the provided library exists in the database.")]    
     private ?Library $library = null;
 
-    #[ORM\OneToMany(mappedBy: 'user_id_fk', targetEntity: Loan::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Loan::class)]
     #[Groups("user")]
     private Collection $loans;
 
@@ -255,7 +255,7 @@ class User
     {
         if (!$this->loans->contains($loan)) {
             $this->loans->add($loan);
-            $loan->setUserIdFk($this);
+            $loan->setUser($this);
         }
 
         return $this;
@@ -265,8 +265,8 @@ class User
     {
         if ($this->loans->removeElement($loan)) {
             // set the owning side to null (unless already changed)
-            if ($loan->getUserIdFk() === $this) {
-                $loan->setUserIdFk(null);
+            if ($loan->getUser() === $this) {
+                $loan->setUser(null);
             }
         }
 
