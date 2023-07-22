@@ -90,7 +90,7 @@ class UserService
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException((string) $errors);
+            throw new \InvalidArgumentException('Invalid user data: ' . (string) $errors);
         }
 
         $this->entityManager->flush();

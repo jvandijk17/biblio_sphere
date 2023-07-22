@@ -37,12 +37,10 @@ class Library
     #[Groups("library")]
     private ?string $postal_code = null;
 
-    #[ORM\OneToMany(mappedBy: 'library', targetEntity: User::class)]
-    #[Groups("library")]
+    #[ORM\OneToMany(mappedBy: 'library', targetEntity: User::class)]    
     private Collection $users;
 
     #[ORM\OneToMany(mappedBy: 'library', targetEntity: Book::class)]
-    #[Groups("library")]
     private Collection $books;
 
     public function __construct()
@@ -175,4 +173,21 @@ class Library
 
         return $this;
     }
+
+    #[Groups("library")]
+    public function getUserIds(): array
+    {
+        return $this->users->map(function ($user) {
+            return $user->getId();
+        })->toArray();
+    }
+
+    #[Groups("library")]
+    public function getBookIds(): array
+    {
+        return $this->books->map(function ($book) {
+            return $book->getId();
+        })->toArray();
+    }
+
 }
