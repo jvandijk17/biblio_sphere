@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\BookCategory;
 use App\Entity\Category;
+use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

@@ -21,7 +21,7 @@ class Category
     #[Groups("category")]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'category_id_fk', targetEntity: BookCategory::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: BookCategory::class)]
     private Collection $bookCategories;
 
     public function __construct()
@@ -58,7 +58,7 @@ class Category
     {
         if (!$this->bookCategories->contains($bookCategory)) {
             $this->bookCategories->add($bookCategory);
-            $bookCategory->setCategoryIdFk($this);
+            $bookCategory->setCategory($this);
         }
 
         return $this;
@@ -68,11 +68,20 @@ class Category
     {
         if ($this->bookCategories->removeElement($bookCategory)) {
             // set the owning side to null (unless already changed)
-            if ($bookCategory->getCategoryIdFk() === $this) {
-                $bookCategory->setCategoryIdFk(null);
+            if ($bookCategory->getCategory() === $this) {
+                $bookCategory->setCategory(null);
             }
         }
 
         return $this;
+    }
+
+
+    #[Groups("category")]
+    public function getBookCategoryIds(): array
+    {
+        return $this->bookCategories->map(function ($bookCategory){
+            return $bookCategory->getId();
+        })->toArray();
     }
 }

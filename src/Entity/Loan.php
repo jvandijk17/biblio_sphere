@@ -23,10 +23,10 @@ class Loan
     #[Groups("loan")]
     private ?\DateTimeInterface $return_date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'loans')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'loans')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'loans')]
+    #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'loanedBooks')]
     private ?Book $book = null;
 
     public function getId(): ?int

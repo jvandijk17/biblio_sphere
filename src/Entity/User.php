@@ -74,7 +74,6 @@ class User
     private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Loan::class)]
-    #[Groups("user")]
     private Collection $loans;
 
     public function __construct()
@@ -277,6 +276,14 @@ class User
     public function getLibraryId(): ?int
     {
         return $this->library->getId();
+    }
+
+    #[Groups("user")]
+    public function getLoanIds(): array
+    {
+        return $this->loans->map(function ($loan){
+            return $loan->getId();
+        })->toArray();
     }
 
 }

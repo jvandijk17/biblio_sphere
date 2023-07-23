@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -17,35 +18,41 @@ class Book
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("book")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("book")]
     private ?string $author = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("book")]
     private ?string $publisher = null;
 
     #[ORM\Column(length: 13, nullable: true)]
+    #[Groups("book")]
     private ?string $isbn = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("book")]
     private ?\DateTimeInterface $publication_year = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("book")]
     private ?int $page_count = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?Library $library = null;
 
-    #[ORM\OneToMany(mappedBy: 'book_id_fk', targetEntity: Loan::class)]
-    private Collection $loans;
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Loan::class)]
+    private Collection $loanedBooks;
 
-    #[ORM\OneToMany(mappedBy: 'book_id_fk', targetEntity: BookCategory::class)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCategory::class)]
     private Collection $bookCategories;
 
     public function __construct()
     {
-        $this->loans = new ArrayCollection();
+        $this->loanedBooks = new ArrayCollection();
         $this->bookCategories = new ArrayCollection();
     }
 
@@ -143,14 +150,14 @@ class Book
      */
     public function getLoans(): Collection
     {
-        return $this->loans;
+        return $this->loanedBooks;
     }
 
     public function addLoan(Loan $loan): static
     {
-        if (!$this->loans->contains($loan)) {
-            $this->loans->add($loan);
-            $loan->setBookIdFk($this);
+        if (!$this->loanedBooks->contains($loan)) {
+            $this->loanedBooks->add($loan);
+            $loan->setBook($this);
         }
 
         return $this;
@@ -158,10 +165,10 @@ class Book
 
     public function removeLoan(Loan $loan): static
     {
-        if ($this->loans->removeElement($loan)) {
+        if ($this->loanedBooks->removeElement($loan)) {
             // set the owning side to null (unless already changed)
-            if ($loan->getBookIdFk() === $this) {
-                $loan->setBookIdFk(null);
+            if ($loan->getBook() === $this) {
+                $loan->setBook(null);
             }
         }
 
@@ -180,7 +187,7 @@ class Book
     {
         if (!$this->bookCategories->contains($bookCategory)) {
             $this->bookCategories->add($bookCategory);
-            $bookCategory->setBookIdFk($this);
+            $bookCategory->setBook($this);
         }
 
         return $this;
@@ -190,11 +197,34 @@ class Book
     {
         if ($this->bookCategories->removeElement($bookCategory)) {
             // set the owning side to null (unless already changed)
-            if ($bookCategory->getBookIdFk() === $this) {
-                $bookCategory->setBookIdFk(null);
+            if ($bookCategory->getBook() === $this) {
+                $bookCategory->setBook(null);
             }
         }
 
         return $this;
     }
+
+    #[Groups("book")]
+    public function getBookCategoryIds(): array
+    {
+        return $this->bookCategories->map(function ($bookCategory) {
+            return $bookCategory->getId();
+        })->toArray();
+    }
+
+    #[Groups("book")]
+    public function getLoanedBookIds(): array
+    {
+        return $this->loanedBooks->map(function ($loanedBook) {
+            return $loanedBook->getId();
+        })->toArray();
+    }
+
+    #[Groups("book")]
+    public function getLibraryId(): ?int
+    {
+        return $this->library->getId();
+    }
+
 }

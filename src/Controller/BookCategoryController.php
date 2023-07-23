@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\BookCategory;
 use App\Repository\BookCategoryRepository;
 use App\Service\BookCategoryService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route("/book/catetgory", name: 'book_category_')]
+#[Route("/book/category", name: 'book_category_')]
 class BookCategoryController extends AbstractController
 {
     private BookCategoryRepository $bookCategoryRepository;
