@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Loan;
+use App\Entity\User;
+use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
