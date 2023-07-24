@@ -49,7 +49,7 @@ class CategoryController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $category = $this->categoryService->createCategory($data);
+            $category = $this->categoryService->saveCategory(null, $data);
 
             return $this->json($category, Response::HTTP_CREATED, [], ['groups' => 'category']);
         } catch(\InvalidArgumentException $e) {
@@ -68,7 +68,7 @@ class CategoryController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $category = $this->categoryService->updateCategory($category, $data);
+            $category = $this->categoryService->saveCategory($category, $data);
 
             return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category']);
         } catch (\InvalidArgumentException $e) {

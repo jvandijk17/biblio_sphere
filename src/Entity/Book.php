@@ -45,14 +45,14 @@ class Book
     private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Loan::class)]
-    private Collection $loanedBooks;
+    private Collection $loans;
 
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCategory::class)]
     private Collection $bookCategories;
 
     public function __construct()
     {
-        $this->loanedBooks = new ArrayCollection();
+        $this->loans = new ArrayCollection();
         $this->bookCategories = new ArrayCollection();
     }
 
@@ -150,13 +150,13 @@ class Book
      */
     public function getLoans(): Collection
     {
-        return $this->loanedBooks;
+        return $this->loans;
     }
 
     public function addLoan(Loan $loan): static
     {
-        if (!$this->loanedBooks->contains($loan)) {
-            $this->loanedBooks->add($loan);
+        if (!$this->loans->contains($loan)) {
+            $this->loans->add($loan);
             $loan->setBook($this);
         }
 
@@ -165,7 +165,7 @@ class Book
 
     public function removeLoan(Loan $loan): static
     {
-        if ($this->loanedBooks->removeElement($loan)) {
+        if ($this->loans->removeElement($loan)) {
             // set the owning side to null (unless already changed)
             if ($loan->getBook() === $this) {
                 $loan->setBook(null);
@@ -214,10 +214,10 @@ class Book
     }
 
     #[Groups("book")]
-    public function getLoanedBookIds(): array
+    public function getLoanIds(): array
     {
-        return $this->loanedBooks->map(function ($loanedBook) {
-            return $loanedBook->getId();
+        return $this->loans->map(function ($loan) {
+            return $loan->getId();
         })->toArray();
     }
 

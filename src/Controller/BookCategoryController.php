@@ -49,7 +49,7 @@ class BookCategoryController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $bookCategory =  $this->bookCategoryService->createBookCategory($data);
+            $bookCategory =  $this->bookCategoryService->saveBookCategory(null, $data);
 
             return $this->json($bookCategory, Response::HTTP_CREATED, [], ['groups' => 'bookCategory']);
         } catch (\InvalidArgumentException $e) {
@@ -68,7 +68,7 @@ class BookCategoryController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $bookCategory = $this->bookCategoryService->updateBookCategory($bookCategory, $data);
+            $bookCategory = $this->bookCategoryService->saveBookCategory($bookCategory, $data);
 
             return $this->json($bookCategory, Response::HTTP_OK, [], ['groups' => 'bookCategory']);
         } catch (\InvalidArgumentException $e) {

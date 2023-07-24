@@ -23,10 +23,10 @@ class Loan
     #[Groups("loan")]
     private ?\DateTimeInterface $return_date = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'loans')]
+    #[ORM\ManyToOne(inversedBy: 'loans')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'loanedBooks')]
+    #[ORM\ManyToOne(inversedBy: 'loans')]
     private ?Book $book = null;
 
     public function getId(): ?int
@@ -83,13 +83,13 @@ class Loan
     }
 
     #[Groups("loan")]
-    public function getBookId(?Book $book): ?int
+    public function getBookId(): ?int
     {
         return $this->book->getId();
     }
 
     #[Groups("loan")]
-    public function getUserId(?User $user): ?int
+    public function getUserId(): ?int
     {
         return $this->user->getId();
     }

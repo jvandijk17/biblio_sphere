@@ -18,36 +18,15 @@ class UserService
         $this->validator = $validator;
     }
 
-    public function createUser(array $data): User
-    {
-        $user = new User();
-        $user->setFirstName($data['first_name']);
-        $user->setLastName($data['last_name']);
-        $user->setEmail($data['email']);
-        $user->setPasswordHash($data['password_hash']);
-        $user->setAddress($data['address']);
-        $user->setCity($data['city']);
-        $user->setProvince($data['province']);
-        $user->setPostalCode($data['postal_code']);
-        $user->setRegistrationDate(new \DateTime());
-        $user->setBirthDate(new \DateTime($data['birth_date']));        
-        $user->setReputation($data['reputation']);
-        $user->setBlocked($data['blocked']);
-        $user->setLibrary($this->entityManager->getRepository(Library::class)->find($data['library']));
 
-        $errors = $this->validator->validate($user);
-        if (count($errors) > 0) {
-            throw new \InvalidArgumentException('Invalid user data: ' . (string) $errors);
+    public function saveUser(?User $user, array $data): User
+    {
+        if(!$user) {
+            $user = new User();
+            $user->setRegistrationDate(new \DateTime());
+            $this->entityManager->persist($user);
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        return $user;
-    }
-
-    public function updateUser(User $user, array $data): User
-    {
         if (isset($data['first_name'])) {
             $user->setFirstName($data['first_name']);
         }
@@ -72,9 +51,6 @@ class UserService
         if (isset($data['postal_code'])) {
             $user->setPostalCode($data['postal_code']);
         }
-        if (isset($data['registration_date'])) {
-            $user->setRegistrationDate(new \DateTime($data['registration_date']));
-        }
         if (isset($data['birth_date'])) {
             $user->setBirthDate(new \DateTime($data['birth_date']));
         }    
@@ -96,5 +72,7 @@ class UserService
         $this->entityManager->flush();
 
         return $user;
+
     }
+
 }

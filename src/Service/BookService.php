@@ -18,31 +18,13 @@ class BookService
         $this->validator = $validator;
     }
 
-    public function createBook(array $data): Book
-    {        
-        $book = new Book();
-        $book->setTitle($data["title"]);
-        $book->setAuthor($data["author"]);
-        $book->setPublisher($data["publisher"]);
-        $book->setIsbn($data["isbn"]);        
-        $book->setPublicationYear(new \DateTime($data['publication_year']));
-        $book->setPageCount($data['page_count']);
-        $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data["library_id"]));
-
-        $errors = $this->validator->validate($book);
-
-        if(count($errors) > 0) {
-            throw new \InvalidArgumentException('Invalid book data: ' . (string) $errors);
+    public function saveBook(?Book $book, array $data): Book
+    {
+        if(!$book) {
+            $book = new Book();
+            $this->entityManager->persist($book);
         }
 
-        $this->entityManager->persist($book);
-        $this->entityManager->flush();
-
-        return $book;
-    }
-
-    public function updateBook(Book $book, array $data): Book
-    {
         if(isset($data["title"])) {
             $book->setTitle($data["title"]);
         }
@@ -61,7 +43,7 @@ class BookService
         if(isset($data["page_count"])) {
             $book->setPageCount($data['page_count']);
         }
-        if(isset($data["libraryid"])) {
+        if(isset($data["library_id"])) {
             $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data["library_id"]));
         }        
 

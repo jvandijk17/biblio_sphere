@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Category;
+use App\Entity\Library;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -17,35 +18,22 @@ class CategoryService
         $this->validator = $validator;
     }
 
-    public function createCategory(array $data): Category
+    public function saveCategory(?Category $category, array $data): Category
     {
-        $category = new Category();
-        $category->setName($data["name"]);
+        if(!$category) {
+            $category = new Category();
+            $this->entityManager->persist($category);
+        }
 
+        if(isset($data["name"])) {
+            $category->setName($data["name"]);
+        }
         $errors = $this->validator->validate($category);
         if (count($errors) > 0) {
             return new \InvalidArgumentException('Invalid category data ' . (string) $errors);
         }
 
-        $this->entityManager->persist($category);
         $this->entityManager->flush();
-
-        return $category;
-    }
-
-    public function updateCategory(Category $category, array $data): Category
-    {
-        if(isset($data["name"])) {
-            $category->setName($data["name"]);
-        }
-
-        $errors = $this->validator->validate($category);
-        if (count($errors) > 0) {
-            return new \InvalidArgumentException((string) $errors);
-        }
-
-        $this->entityManager->flush();
-
         return $category;
     }
 }

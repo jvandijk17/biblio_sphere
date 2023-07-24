@@ -19,40 +19,32 @@ class LoanService
         $this->validator = $validator;       
     }
 
-    public function createLoan(array $data): Loan
+    public function saveLoan(?Loan $loan, array $data): Loan
     {
-        $loan = new Loan;
-        $loan->setLoanDate(new \DateTime());
-        $loan->setUser($this->entityManager->getRepository(User::class)->find($data["user"]));
-        $loan->setBook($this->entityManager->getRepository(Book::class)->find($data["book"]));
+        if(!$loan) {
+            $loan = new Loan();
+            $loan->setLoanDate(new \DateTime());
+            $this->entityManager->persist($loan);
+        }
+
+        if(isset($data["user"])) {
+            $loan->setUser($this->entityManager->getRepository(User::class)->find($data["user"]));
+        }        
+        if(isset($data["book"])) {
+            $loan->setBook($this->entityManager->getRepository(Book::class)->find($data["book"]));
+        }
+        if(isset($data["return_date"])) {
+            $loan->setReturnDate(new \DateTime($data["return_date"]));
+        }        
 
         $errors = $this->validator->validate($loan);
         if(count($errors) > 0) {
             throw new \InvalidArgumentException('Invalid loan data: ' . (string) $errors);
         }
 
-        $this->entityManager->persist($loan);
         $this->entityManager->flush();
 
         return $loan;
-    }
 
-    public function updateLoan(Loan $loan, array $data): Loan
-    {
-        if(isset($data["user"])) {
-            $loan->setUser($data["user"]);
-        }
-        if(isset($data["book"])) {
-            $loan->setBook($data["book"]);
-        }
-
-        $errors = $this->validator->validate($loan);
-        if(count($errors) > 0) {
-            throw new \InvalidArgumentException((string) $errors);
-        }
-
-        $this->entityManager->flush();
-
-        return $loan;
     }
 }

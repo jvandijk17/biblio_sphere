@@ -49,7 +49,7 @@ class UserController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $user = $this->userService->createUser($data);
+            $user = $this->userService->saveUser(null, $data);
 
             return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user']);
         } catch (\InvalidArgumentException $e) {
@@ -68,7 +68,7 @@ class UserController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $user = $this->userService->updateUser($user, $data);
+            $user = $this->userService->saveUser($user, $data);
 
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user']);
         } catch (\InvalidArgumentException $e) {

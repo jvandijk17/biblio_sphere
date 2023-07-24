@@ -17,28 +17,13 @@ class LibraryService
         $this->validator = $validator;
     }
 
-    public function createLibrary(array $data): Library
+    public function saveLibrary(?Library $library, array $data): Library
     {
-        $library = new Library();
-        $library->setName($data['name']);
-        $library->setAddress($data['address']);
-        $library->setCity($data['city']);
-        $library->setProvince($data['province']);
-        $library->setPostalCode($data['postal_code']);
-
-        $errors = $this->validator->validate($library);
-        if (count($errors) > 0) {
-            throw new \InvalidArgumentException('Invalid library data: ' . (string) $errors);
+        if(!$library) {
+            $library = new Library();
+            $this->entityManager->persist($library);
         }
-
-        $this->entityManager->persist($library);
-        $this->entityManager->flush();
-
-        return $library;
-    }
-
-    public function updateLibrary(Library $library, array $data): Library
-    {
+        
         if (isset($data['name'])) {
             $library->setName($data['name']);
         }
@@ -57,11 +42,10 @@ class LibraryService
 
         $errors = $this->validator->validate($library);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException((string) $errors);
+            throw new \InvalidArgumentException('Invalid library data: ' . (string) $errors);
         }
 
         $this->entityManager->flush();
-
         return $library;
     }
 }

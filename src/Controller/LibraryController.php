@@ -50,7 +50,7 @@ class LibraryController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $library = $this->libraryService->createLibrary($data);
+            $library = $this->libraryService->saveLibrary(null, $data);
 
             return $this->json($library, Response::HTTP_CREATED, [], ['groups' => 'library']);
         } catch (\InvalidArgumentException $e) {
@@ -69,7 +69,7 @@ class LibraryController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $library = $this->libraryService->updateLibrary($library, $data);
+            $library = $this->libraryService->saveLibrary($library, $data);
 
             return $this->json($library, Response::HTTP_OK, [], ['groups' => 'library']);
         } catch (\InvalidArgumentException $e) {

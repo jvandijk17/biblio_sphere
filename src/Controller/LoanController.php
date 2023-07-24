@@ -49,7 +49,7 @@ class LoanController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $loan = $this->loanService->createLoan($data);
+            $loan = $this->loanService->saveLoan(null, $data);
 
             return $this->json($loan, Response::HTTP_CREATED, [], ['groups' => 'loan']);
         } catch (\InvalidArgumentException $e) {
@@ -68,7 +68,7 @@ class LoanController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $loan = $this->loanService->updateLoan($loan, $data);
+            $loan = $this->loanService->saveLoan($loan, $data);
 
             return $this->json($loan, Response::HTTP_OK, [], ['groups' => 'loan']);
         } catch (\InvalidArgumentException $e) {

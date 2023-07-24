@@ -49,7 +49,7 @@ class BookController extends AbstractController
     {
         try {
             $data = json_decode($request->getContent(), true);
-            $book = $this->bookService->createBook($data);
+            $book = $this->bookService->saveBook(null, $data);
             
             return $this->json($book, Response::HTTP_CREATED, [], ['groups' => 'book']);
         } catch (\InvalidArgumentException $e) {
@@ -68,7 +68,7 @@ class BookController extends AbstractController
         
         try {
             $data = json_decode($request->getContent(), true);
-            $book = $this->bookService->updateBook($book, $data);
+            $book = $this->bookService->saveBook($book, $data);
 
             return $this->json($book, Response::HTTP_OK, [], ['groups' => 'book']);
         } catch (\InvalidArgumentException $e) {
