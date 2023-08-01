@@ -21,4 +21,11 @@ class LibraryRepository extends ServiceEntityRepository
         parent::__construct($registry, Library::class);
     }
 
+    public function findMaxId()
+    {
+        return $this->createQueryBuilder('u')
+            ->select('MAX(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

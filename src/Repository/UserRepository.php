@@ -21,4 +21,11 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findMaxId()
+    {
+        return $this->createQueryBuilder('u')
+            ->select('MAX(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
