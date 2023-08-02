@@ -9,10 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 class UserControllerTest extends WebTestCase
 {
     private $client;
+    private $libraryId;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
+        $this->libraryId = $this->createLibraryAndReturnId();
     }
 
     public function testIndex(): void
@@ -42,7 +44,7 @@ class UserControllerTest extends WebTestCase
             "postal_code" => "12345",
             "registration_date" => "2023-07-20",
             "birth_date" => "1990-01-01",
-            "library" => 2,
+            "library" => $this->libraryId,
             "reputation" => 5,
             "blocked" => 0
         ];
@@ -164,5 +166,12 @@ class UserControllerTest extends WebTestCase
         $userRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\User::class);
         $lastId = $userRepository->findMaxId();
         return $lastId + 1;
+    }
+
+    private function createLibraryAndReturnId(): int
+    {
+        $library = LibraryControllerTest::createLibrary($this->client);
+        $responseData = json_decode($library->getContent(), true);
+        return $responseData['id'];
     }
 }

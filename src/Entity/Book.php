@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -18,26 +19,32 @@ class Book
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Title cannot be null.")]
     #[Groups("book")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Author cannot be null.")]
     #[Groups("book")]
     private ?string $author = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Publisher cannot be null.")]
     #[Groups("book")]
     private ?string $publisher = null;
 
-    #[ORM\Column(length: 13, nullable: true)]
+    #[ORM\Column(length: 13)]
+    #[Assert\NotNull(message: "ISBN cannot be null.")]
     #[Groups("book")]
     private ?string $isbn = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull(message: "Publication year cannot be null.")]
     #[Groups("book")]
     private ?\DateTimeInterface $publication_year = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
+    #[Assert\NotNull(message: "Page count cannot be null.")]
     #[Groups("book")]
     private ?int $page_count = null;
 

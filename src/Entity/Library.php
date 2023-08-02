@@ -20,22 +20,26 @@ class Library
 
     #[ORM\Column(length: 255)]
     #[Groups("library")]
-    #[Assert\NotNull(message: "The name of the Library is required.")]
+    #[Assert\NotNull(message: "Name cannot be null.")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Address cannot be null.")]
     #[Groups("library")]
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "City cannot be null.")]
     #[Groups("library")]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Province cannot be null.")]
     #[Groups("library")]
     private ?string $province = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\Column(length: 10)]
+    #[Assert\NotNull(message: "Postal code cannot be null.")]
     #[Groups("library")]
     private ?string $postal_code = null;
 

@@ -24,10 +24,7 @@ class LibraryControllerTest extends WebTestCase
         $this->assertJson($response->getContent());
     }
 
-    /**
-     * Test successful scenario
-     */
-    public function testCreateOK(): int
+    public static function createLibrary($client): Response
     {
         $data = [
             "name" => "Central Public Library",
@@ -36,9 +33,16 @@ class LibraryControllerTest extends WebTestCase
             "province" => "Province",
             "postal_code" => "54321"
         ];
+        $client->request('POST', '/library/', [], [], [], json_encode($data));
+        return $client->getResponse();
+    }
 
-        $this->client->request('POST', '/library/', [], [], [], json_encode($data));
-        $response = $this->client->getResponse();
+    /**
+     * Test successful scenario
+     */
+    public function testCreateOK(): int
+    {
+        $response = $this->createLibrary($this->client);        
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertJson($response->getContent());

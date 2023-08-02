@@ -21,56 +21,67 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "First name cannot be null.")]
     #[Groups("user")]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Last name cannot be null.")]
     #[Groups("user")]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Email cannot be null.")]
     #[Groups("user")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Password cannot be null.")]
     #[Groups("user")]
     private ?string $password_hash = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Address cannot be null.")]
     #[Groups("user")]
     private ?string $address = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "City cannot be null.")]
     #[Groups("user")]
     private ?string $city = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull(message: "Province cannot be null.")]
     #[Groups("user")]
     private ?string $province = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\Column(length: 10)]
+    #[Assert\NotNull(message: "Postal code cannot be null.")]
     #[Groups("user")]
     private ?string $postal_code = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups("user")]
+    #[Assert\NotNull(message: "Registration Date cannot be null.")]
+    #[Groups("user")]    
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Groups("user")]
     private ?\DateTimeInterface $birth_date = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
+    #[Assert\NotNull(message: "Reputation cannot be null.")]
     #[Groups("user")]
     private ?int $reputation = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Blocked cannot be null.")]
     #[Groups("user")]
     private ?bool $blocked = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull(message: "Library cannot be null, make sure that the provided library exists in the database.")]    
+    #[Assert\NotNull(message: "Library cannot be null, make sure that the provided library exists in the database.")]
     private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Loan::class)]

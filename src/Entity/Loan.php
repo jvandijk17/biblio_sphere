@@ -6,6 +6,7 @@ use App\Repository\LoanRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LoanRepository::class)]
 class Loan
@@ -16,6 +17,7 @@ class Loan
     private ?int $id = null;    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull(message: "Loan Date cannot be null.")]
     #[Groups("loan")]
     private ?\DateTimeInterface $loan_date = null;
 
