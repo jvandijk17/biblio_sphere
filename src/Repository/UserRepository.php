@@ -23,8 +23,8 @@ class UserRepository extends ServiceEntityRepository
 
     public function findMaxId()
     {
-        return $this->createQueryBuilder('u')
-            ->select('MAX(u.id)')
+        return $this->createQueryBuilder('r')
+            ->select('MAX(r.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }

@@ -14,6 +14,7 @@ class Loan
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("loan")]
     private ?int $id = null;    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -26,9 +27,13 @@ class Loan
     private ?\DateTimeInterface $return_date = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "User cannot be null, make sure that the provided user exists in the database.")]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Book cannot be null, make sure that the provided book exists in the database.")]
     private ?Book $book = null;
 
     public function getId(): ?int

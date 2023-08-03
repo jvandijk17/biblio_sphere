@@ -6,45 +6,28 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class UserControllerTest extends WebTestCase
+class LoanControllerTest extends WebTestCase
 {
     private $client;
+    private $bookId;
+    private $userId;
     private $libraryId;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
         $this->libraryId = $this->createLibraryAndReturnId();
+        $this->bookId = $this->createBookAndReturnId();
+        $this->userId = $this->createUserAndReturnId();
     }
 
     public function testIndex(): void
     {
-        $this->client->request('GET', '/user/');
+        $this->client->request('GET', '/loan/');
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertJson($response->getContent());
-    }
-
-    public static function createUser($client, $libraryId): Response
-    {
-        $data = [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "email" => "john.doe@example.com",
-            "password_hash" => "hashed_password",
-            "address" => "123 Street",
-            "city" => "City",
-            "province" => "Province",
-            "postal_code" => "12345",
-            "registration_date" => "2023-07-20",
-            "birth_date" => "1990-01-01",
-            "library" => $libraryId,
-            "reputation" => 5,
-            "blocked" => 0
-        ];
-        $client->request('POST', '/user/', [], [], [], json_encode($data));
-        return $client->getResponse();
     }
 
     /**
@@ -52,8 +35,14 @@ class UserControllerTest extends WebTestCase
      */
     public function testCreateOK(): int
     {
+        $data = [
+            "user" => $this->userId,
+            "book" => $this->bookId,
+            "loan_date" => "2023-07-20"
+        ];
 
-        $response = $this->createUser($this->client, $this->libraryId);
+        $this->client->request('POST', '/loan/', [], [], [], json_encode($data));
+        $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertJson($response->getContent());
@@ -67,12 +56,11 @@ class UserControllerTest extends WebTestCase
     public function testCreateKO(): void
     {
 
-
         $data = [
-            "first_name" => ""
+            "title" => ""
         ];
 
-        $this->client->request('POST', '/user/', [], [], [], json_encode($data));
+        $this->client->request('POST', '/loan/', [], [], [], json_encode($data));
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
@@ -82,11 +70,10 @@ class UserControllerTest extends WebTestCase
      * Test successful scenario
      * @depends testCreateOK
      */
-    public function testShowOK($userId): void
+    public function testShowOK($loanId): void
     {
 
-
-        $this->client->request('GET', "/user/{$userId}");
+        $this->client->request('GET', "/loan/{$loanId}");
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
@@ -99,8 +86,7 @@ class UserControllerTest extends WebTestCase
     public function testShowKO(): void
     {
 
-
-        $this->client->request('GET', '/user/' . $this->getLastIdPlusOne());
+        $this->client->request('GET', '/loan/' . $this->getLastIdPlusOne());
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
@@ -111,11 +97,9 @@ class UserControllerTest extends WebTestCase
      * Test successful scenario
      * @depends testCreateOK
      */
-    public function testUpdateOK($userId): void
+    public function testUpdateOK($loanId): void
     {
-
-
-        $this->client->request('PUT', "/user/{$userId}", [], [], [], json_encode(['username' => 'newuser', 'password' => 'newpassword']));
+        $this->client->request('PUT', "/loan/{$loanId}", [], [], [], json_encode(['loan_date' => '2023-07-25']));
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -128,8 +112,7 @@ class UserControllerTest extends WebTestCase
     public function testUpdateKO(): void
     {
 
-
-        $this->client->request('PUT', '/user/' . $this->getLastIdPlusOne(), [], [], [], json_encode(['username' => 'newuser', 'password' => 'newpassword']));
+        $this->client->request('PUT', '/loan/' . $this->getLastIdPlusOne(), [], [], [], json_encode(['loan_date' => '2023-07-25']));
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
@@ -140,11 +123,10 @@ class UserControllerTest extends WebTestCase
      * Test successful scenario
      * @depends testCreateOK
      */
-    public function testDeleteOK($userId): void
+    public function testDeleteOK($loanId): void
     {
 
-
-        $this->client->request('DELETE', "/user/{$userId}");
+        $this->client->request('DELETE', "/loan/{$loanId}");
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
@@ -156,8 +138,7 @@ class UserControllerTest extends WebTestCase
     public function testDeleteKO(): void
     {
 
-
-        $this->client->request('DELETE', '/user/' . $this->getLastIdPlusOne());
+        $this->client->request('DELETE', '/loan/' . $this->getLastIdPlusOne());
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
@@ -166,9 +147,23 @@ class UserControllerTest extends WebTestCase
 
     private function getLastIdPlusOne(): int
     {
-        $userRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\User::class);
-        $lastId = $userRepository->findMaxId();
+        $bookRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\Loan::class);
+        $lastId = $bookRepository->findMaxId();
         return $lastId + 1;
+    }
+
+    private function createBookAndReturnId(): int
+    {
+        $library = BookControllerTest::createBook($this->client, $this->libraryId);
+        $responseData = json_decode($library->getContent(), true);
+        return $responseData['id'];
+    }
+
+    private function createUserAndReturnId(): int
+    {
+        $library = UserControllerTest::createUser($this->client, $this->libraryId);
+        $responseData = json_decode($library->getContent(), true);
+        return $responseData['id'];
     }
 
     private function createLibraryAndReturnId(): int
