@@ -22,46 +22,55 @@ class User
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "First name cannot be null.")]
+    #[Assert\NotBlank(message: "First name cannot be blank.")]
     #[Groups("user")]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Last name cannot be null.")]
+    #[Assert\NotBlank(message: "Last name cannot be blank.")]
     #[Groups("user")]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Email cannot be null.")]
+    #[Assert\NotBlank(message: "Email cannot be blank.")]
     #[Groups("user")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Password cannot be null.")]
+    #[Assert\NotBlank(message: "Password cannot be blank.")]
     #[Groups("user")]
     private ?string $password_hash = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Address cannot be null.")]
+    #[Assert\NotBlank(message: "Address cannot be blank.")]
     #[Groups("user")]
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "City cannot be null.")]
+    #[Assert\NotBlank(message: "City cannot be blank.")]
     #[Groups("user")]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Province cannot be null.")]
+    #[Assert\NotBlank(message: "Province cannot be blank.")]
     #[Groups("user")]
     private ?string $province = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\NotNull(message: "Postal code cannot be null.")]
+    #[Assert\NotBlank(message: "Postal code cannot be blank.")]
     #[Groups("user")]
     private ?string $postal_code = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "Registration Date cannot be null.")]
+    #[Assert\NotBlank(message: "Registration Date cannot be blank.")]
     #[Groups("user")]    
     private ?\DateTimeInterface $registration_date = null;
 
@@ -71,17 +80,19 @@ class User
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Reputation cannot be null.")]
+    #[Assert\NotBlank(message: "Reputation cannot be blank.")]
     #[Groups("user")]
     private ?int $reputation = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message: "Blocked cannot be null.")]
+    #[Assert\NotNull(message: "Blocked cannot be null.")]    
     #[Groups("user")]
     private ?bool $blocked = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Library cannot be null, make sure that the provided library exists in the database.")]
+    #[Assert\NotBlank(message: "Library cannot be blank, make sure that the provided library exists in the database.")]
     private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Loan::class)]

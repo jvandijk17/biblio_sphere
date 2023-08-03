@@ -21,31 +21,37 @@ class Book
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Title cannot be null.")]
+    #[Assert\NotBlank(message: "Title cannot be blank.")]
     #[Groups("book")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Author cannot be null.")]
+    #[Assert\NotBlank(message: "Author cannot be blank.")]
     #[Groups("book")]
     private ?string $author = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Publisher cannot be null.")]
+    #[Assert\NotBlank(message: "Publisher cannot be blank.")]
     #[Groups("book")]
     private ?string $publisher = null;
 
     #[ORM\Column(length: 13)]
     #[Assert\NotNull(message: "ISBN cannot be null.")]
+    #[Assert\NotBlank(message: "ISBN cannot be blank.")]
     #[Groups("book")]
     private ?string $isbn = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "Publication year cannot be null.")]
+    #[Assert\NotBlank(message: "Publication year cannot be blank.")]
     #[Groups("book")]
     private ?\DateTimeInterface $publication_year = null;
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Page count cannot be null.")]
+    #[Assert\NotBlank(message: "Page count cannot be blank.")]
     #[Groups("book")]
     private ?int $page_count = null;
 

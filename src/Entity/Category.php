@@ -20,6 +20,7 @@ class Category
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Name cannot be null.")]
+    #[Assert\NotBlank(message: "Name cannot be blank.")]
     #[Groups("category")]
     private ?string $name = null;
 

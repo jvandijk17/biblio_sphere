@@ -19,6 +19,7 @@ class Loan
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "Loan Date cannot be null.")]
+    #[Assert\NotBlank(message: "Loan Date cannot be blank.")]
     #[Groups("loan")]
     private ?\DateTimeInterface $loan_date = null;
 
@@ -29,11 +30,13 @@ class Loan
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "User cannot be null, make sure that the provided user exists in the database.")]
+    #[Assert\NotBlank(message: "User cannot be blank, make sure that the provided user exists in the database.")]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Book cannot be null, make sure that the provided book exists in the database.")]
+    #[Assert\NotBlank(message: "Book cannot be blank, make sure that the provided book exists in the database.")]
     private ?Book $book = null;
 
     public function getId(): ?int

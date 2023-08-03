@@ -30,7 +30,7 @@ class CategoryService
         }
         $errors = $this->validator->validate($category);
         if (count($errors) > 0) {
-            return new \InvalidArgumentException('Invalid category data ' . (string) $errors);
+            throw new \InvalidArgumentException('Invalid category data ' . (string) $errors);
         }
 
         $this->entityManager->flush();
