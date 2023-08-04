@@ -32,7 +32,7 @@ class UserControllerTest extends WebTestCase
             "first_name" => "John",
             "last_name" => "Doe",
             "email" => "john.doe@example.com",
-            "password_hash" => "hashed_password",
+            "password" => "hashed_password",
             "address" => "123 Street",
             "city" => "City",
             "province" => "Province",

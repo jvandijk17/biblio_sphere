@@ -9,10 +9,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -42,7 +43,7 @@ class User
     #[Assert\NotNull(message: "Password cannot be null.")]
     #[Assert\NotBlank(message: "Password cannot be blank.")]
     #[Groups("user")]
-    private ?string $password_hash = null;
+    private ?string $password = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Address cannot be null.")]
@@ -71,7 +72,7 @@ class User
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "Registration Date cannot be null.")]
     #[Assert\NotBlank(message: "Registration Date cannot be blank.")]
-    #[Groups("user")]    
+    #[Groups("user")]
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -85,7 +86,7 @@ class User
     private ?int $reputation = null;
 
     #[ORM\Column]
-    #[Assert\NotNull(message: "Blocked cannot be null.")]    
+    #[Assert\NotNull(message: "Blocked cannot be null.")]
     #[Groups("user")]
     private ?bool $blocked = null;
 
@@ -144,15 +145,14 @@ class User
         return $this;
     }
 
-    public function getPasswordHash(): ?string
+    public function getPassword(): string
     {
-        return $this->password_hash;
+        return $this->password;
     }
 
-    public function setPasswordHash(string $password_hash): static
+    public function setPassword(string $password): self
     {
-        $this->password_hash = $password_hash;
-
+        $this->password = $password;
         return $this;
     }
 
@@ -303,9 +303,8 @@ class User
     #[Groups("user")]
     public function getLoanIds(): array
     {
-        return $this->loans->map(function ($loan){
+        return $this->loans->map(function ($loan) {
             return $loan->getId();
         })->toArray();
     }
-
 }

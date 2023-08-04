@@ -6,22 +6,25 @@ use App\Entity\User;
 use App\Entity\Library;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService
+class UserService 
 {
     private EntityManagerInterface $entityManager;
     private ValidatorInterface $validator;
+    private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher)
     {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->passwordHasher = $passwordHasher;
     }
 
 
     public function saveUser(?User $user, array $data): User
     {
-        if(!$user) {
+        if (!$user) {
             $user = new User();
             $user->setRegistrationDate(new \DateTime());
             $this->entityManager->persist($user);
@@ -36,9 +39,11 @@ class UserService
         if (isset($data['email'])) {
             $user->setEmail($data['email']);
         }
-        if (isset($data['password_hash'])) {
-            $user->setPasswordHash($data['password_hash']);
-        }
+        if (isset($data['password'])) {
+            $plainPassword = $data['password'];
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPassword($hashedPassword);
+        }   
         if (isset($data['address'])) {
             $user->setAddress($data['address']);
         }
@@ -53,14 +58,14 @@ class UserService
         }
         if (isset($data['birth_date'])) {
             $user->setBirthDate(new \DateTime($data['birth_date']));
-        }    
+        }
         if (isset($data['reputation'])) {
             $user->setReputation($data['reputation']);
         }
         if (isset($data['blocked'])) {
             $user->setBlocked($data['blocked']);
         }
-        if(isset($data['library'])) {                    
+        if (isset($data['library'])) {
             $user->setLibrary($this->entityManager->getRepository(Library::class)->find($data['library']));
         }
 
@@ -72,7 +77,5 @@ class UserService
         $this->entityManager->flush();
 
         return $user;
-
     }
-
 }
