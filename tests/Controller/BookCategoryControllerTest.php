@@ -27,11 +27,11 @@ class BookCategoryControllerTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
+        $token = $this->getBearerToken($this->client);
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
         $this->libraryId = $this->getLibraryId($this->client);
         $this->bookId = $this->getBookId($this->client, $this->libraryId);
         $this->categoryId = $this->getCategoryId($this->client);
-        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->libraryId));
-        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void

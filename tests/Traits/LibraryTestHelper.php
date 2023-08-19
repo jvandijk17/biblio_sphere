@@ -19,7 +19,7 @@ trait LibraryTestHelper
         return $client->getResponse();
     }
 
-    private function getLibraryId($client): Response
+    private function getLibraryId($client): int
     {
         $library = $this->createLibrary($client);
         $responseData = json_decode($library->getContent(), true);

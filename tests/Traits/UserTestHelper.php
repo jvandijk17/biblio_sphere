@@ -27,7 +27,7 @@ trait UserTestHelper
         return $client->getResponse();
     }
 
-    private function getUserId($client, $libraryId): Response
+    private function getUserId($client, $libraryId): int
     {
         $user = $this->createUser($client, $libraryId);
         $responseData = json_decode($user->getContent(), true);

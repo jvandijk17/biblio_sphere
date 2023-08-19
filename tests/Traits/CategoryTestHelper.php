@@ -16,7 +16,7 @@ trait CategoryTestHelper
         return $client->getResponse();
     }
 
-    private function getCategoryId($client): Response
+    private function getCategoryId($client): int
     {
         $category = $this->createCategory($client);
         $responseData = json_decode($category->getContent(), true);

@@ -22,7 +22,7 @@ class LibraryControllerTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->getLibraryId($this->client)));
+        $token = $this->getBearerToken($this->client);
         $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 

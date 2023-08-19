@@ -22,7 +22,7 @@ trait BookTestHelper
         return $client->getResponse();
     }
 
-    private function getBookId($client, $libraryId): Response
+    private function getBookId($client, $libraryId): int
     {
         $book = $this->createBook($client, $libraryId);
         $responseData = json_decode($book->getContent(), true);
