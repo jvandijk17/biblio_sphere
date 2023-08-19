@@ -4,17 +4,27 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use App\Tests\Traits\UserTestHelper;
+use App\Tests\Traits\LibraryTestHelper;
+use App\Tests\Traits\BaseTestHelper;
 
 
 class UserControllerTest extends WebTestCase
 {
+
+    use UserTestHelper;
+    use LibraryTestHelper;
+    use BaseTestHelper;
+
     private $client;
     private $libraryId;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $this->libraryId = $this->createLibraryAndReturnId();
+        $this->libraryId = $this->getLibraryId($this->client);
+        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->getLibraryId($this->client)));
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void
@@ -24,27 +34,6 @@ class UserControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertJson($response->getContent());
-    }
-
-    public static function createUser($client, $libraryId): Response
-    {
-        $data = [
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "email" => "john.doe@example.com",
-            "password" => "hashed_password",
-            "address" => "123 Street",
-            "city" => "City",
-            "province" => "Province",
-            "postal_code" => "12345",
-            "registration_date" => "2023-07-20",
-            "birth_date" => "1990-01-01",
-            "library" => $libraryId,
-            "reputation" => 5,
-            "blocked" => 0
-        ];
-        $client->request('POST', '/user/', [], [], [], json_encode($data));
-        return $client->getResponse();
     }
 
     /**
@@ -169,12 +158,5 @@ class UserControllerTest extends WebTestCase
         $userRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\User::class);
         $lastId = $userRepository->findMaxId();
         return $lastId + 1;
-    }
-
-    private function createLibraryAndReturnId(): int
-    {
-        $library = LibraryControllerTest::createLibrary($this->client);
-        $responseData = json_decode($library->getContent(), true);
-        return $responseData['id'];
     }
 }

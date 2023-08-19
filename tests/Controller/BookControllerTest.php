@@ -4,17 +4,28 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Tests\Traits\BookTestHelper;
+use App\Tests\Traits\LibraryTestHelper;
+use App\Tests\Traits\UserTestHelper;
+use App\Tests\Traits\BaseTestHelper;
 
 class BookControllerTest extends WebTestCase
 {
+
+    use BookTestHelper;
+    use LibraryTestHelper;
+    use UserTestHelper;
+    use BaseTestHelper;
+
     private $client;
-    private $libraryId;
+    private $libraryId;    
 
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $this->libraryId = $this->createLibraryAndReturnId();
+        $this->libraryId = $this->getLibraryId($this->client);    
+        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->libraryId));
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void
@@ -24,21 +35,6 @@ class BookControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertJson($response->getContent());
-    }
-
-    public static function createBook($client, $libraryId): Response
-    {
-        $data = [
-            "title" => "Book Title",
-            "author" => "Book Author",
-            "publisher" => "Book Publisher",
-            "isbn" => "1234567890123",
-            "publication_year" => "2023-01-01",
-            "page_count" => 500,
-            "library_id" => $libraryId
-        ];
-        $client->request('POST', '/book/', [], [], [], json_encode($data));
-        return $client->getResponse();
     }
 
     /**
@@ -155,12 +151,5 @@ class BookControllerTest extends WebTestCase
         $bookRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\Book::class);
         $lastId = $bookRepository->findMaxId();
         return $lastId + 1;
-    }
-
-    private function createLibraryAndReturnId(): int
-    {
-        $library = LibraryControllerTest::createLibrary($this->client);
-        $responseData = json_decode($library->getContent(), true);
-        return $responseData['id'];
     }
 }

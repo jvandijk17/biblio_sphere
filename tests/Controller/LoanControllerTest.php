@@ -4,10 +4,19 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Tests\Traits\UserTestHelper;
+use App\Tests\Traits\LibraryTestHelper;
+use App\Tests\Traits\BookTestHelper;
+use App\Tests\Traits\BaseTestHelper;
 
 class LoanControllerTest extends WebTestCase
 {
+
+    use UserTestHelper;
+    use LibraryTestHelper;
+    use BookTestHelper;
+    use BaseTestHelper;
+
     private $client;
     private $bookId;
     private $userId;
@@ -16,9 +25,11 @@ class LoanControllerTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $this->libraryId = $this->createLibraryAndReturnId();
-        $this->bookId = $this->createBookAndReturnId();
-        $this->userId = $this->createUserAndReturnId();
+        $this->libraryId = $this->getLibraryId($this->client);
+        $this->bookId = $this->getBookId($this->client, $this->libraryId);
+        $this->userId = $this->getUserId($this->client, $this->libraryId);
+        $token = $this->getBearerToken($this->client, $this->userId);
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void
@@ -150,26 +161,5 @@ class LoanControllerTest extends WebTestCase
         $bookRepository = $this->client->getContainer()->get('doctrine')->getRepository(\App\Entity\Loan::class);
         $lastId = $bookRepository->findMaxId();
         return $lastId + 1;
-    }
-
-    private function createBookAndReturnId(): int
-    {
-        $library = BookControllerTest::createBook($this->client, $this->libraryId);
-        $responseData = json_decode($library->getContent(), true);
-        return $responseData['id'];
-    }
-
-    private function createUserAndReturnId(): int
-    {
-        $library = UserControllerTest::createUser($this->client, $this->libraryId);
-        $responseData = json_decode($library->getContent(), true);
-        return $responseData['id'];
-    }
-
-    private function createLibraryAndReturnId(): int
-    {
-        $library = LibraryControllerTest::createLibrary($this->client);
-        $responseData = json_decode($library->getContent(), true);
-        return $responseData['id'];
     }
 }

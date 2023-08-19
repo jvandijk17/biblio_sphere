@@ -4,15 +4,26 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Tests\Traits\CategoryTestHelper;
+use App\Tests\Traits\UserTestHelper;
+use App\Tests\Traits\BaseTestHelper;
+use App\Tests\Traits\LibraryTestHelper;
 
 class CategoryControllerTest extends WebTestCase
 {
+
+    use CategoryTestHelper;
+    use BaseTestHelper;
+    use UserTestHelper;
+    use LibraryTestHelper;
+
     private $client;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
+        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->getLibraryId($this->client)));
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void
@@ -22,15 +33,6 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertJson($response->getContent());
-    }
-
-    public static function createCategory($client): Response
-    {
-        $data = [
-            "name" => "Fiction"
-        ];
-        $client->request('POST', '/category/', [], [], [], json_encode($data));
-        return $client->getResponse();
     }
 
     /**

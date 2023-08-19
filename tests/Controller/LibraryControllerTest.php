@@ -4,15 +4,26 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use App\Tests\Traits\LibraryTestHelper;
+use App\Tests\Traits\UserTestHelper;
+use App\Tests\Traits\BaseTestHelper;
 
 
 class LibraryControllerTest extends WebTestCase
 {
+
+    use LibraryTestHelper;
+    use UserTestHelper;
+    use BaseTestHelper;
+
     private $client;
+    private $userId;
 
     public function setUp(): void
     {
         $this->client = static::createClient();
+        $token = $this->getBearerToken($this->client, $this->getUserId($this->client, $this->getLibraryId($this->client)));
+        $this->client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $token));
     }
 
     public function testIndex(): void
@@ -24,25 +35,12 @@ class LibraryControllerTest extends WebTestCase
         $this->assertJson($response->getContent());
     }
 
-    public static function createLibrary($client): Response
-    {
-        $data = [
-            "name" => "Central Public Library",
-            "address" => "456 Main Street",
-            "city" => "Townsville",
-            "province" => "Province",
-            "postal_code" => "54321"
-        ];
-        $client->request('POST', '/library/', [], [], [], json_encode($data));
-        return $client->getResponse();
-    }
-
     /**
      * Test successful scenario
      */
     public function testCreateOK(): int
     {
-        $response = $this->createLibrary($this->client);        
+        $response = $this->createLibrary($this->client);
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertJson($response->getContent());
