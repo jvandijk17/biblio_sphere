@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService 
+class UserService
 {
     private EntityManagerInterface $entityManager;
     private ValidatorInterface $validator;
@@ -43,7 +43,7 @@ class UserService
             $plainPassword = $data['password'];
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
-        }   
+        }
         if (isset($data['address'])) {
             $user->setAddress($data['address']);
         }
@@ -71,7 +71,9 @@ class UserService
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException('Invalid user data: ' . (string) $errors);
+            throw new \InvalidArgumentException(json_encode(array_map(function ($error) {
+                return $error->getMessage();
+            }, iterator_to_array($errors))));
         }
 
         $this->entityManager->flush();

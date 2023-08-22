@@ -11,9 +11,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(
+    fields: ['email'],    
+    message: 'Email already in use. Please try another one.',
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -34,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("user")]
     private ?string $last_name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotNull(message: "Email cannot be null.")]
     #[Assert\NotBlank(message: "Email cannot be blank.")]
     #[Groups("user")]
@@ -42,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "Password cannot be null.")]
-    #[Assert\NotBlank(message: "Password cannot be blank.")]    
+    #[Assert\NotBlank(message: "Password cannot be blank.")]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]

@@ -53,7 +53,7 @@ class UserController extends AbstractController
 
             return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user']);
         } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['errors' => json_decode($e->getMessage(), true)], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -72,7 +72,7 @@ class UserController extends AbstractController
 
             return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user']);
         } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['errors' => json_decode($e->getMessage(), true)], Response::HTTP_BAD_REQUEST);
         }
     }
 
