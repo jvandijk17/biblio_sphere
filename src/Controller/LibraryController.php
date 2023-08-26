@@ -5,25 +5,25 @@ namespace App\Controller;
 use App\Repository\LibraryRepository;
 use App\Service\LibraryService;
 use Doctrine\ORM\EntityManagerInterface;
-use LDAP\Result;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/library', name: 'library_')]
 class LibraryController extends AbstractController
 {
     private LibraryRepository $libraryRepository;
     private EntityManagerInterface $entityManager;
-    private LibraryService $libraryService;    
+    private LibraryService $libraryService;
 
     public function __construct(LibraryRepository $libraryRepository, EntityManagerInterface $entityManager, LibraryService $libraryService)
     {
         $this->libraryRepository = $libraryRepository;
         $this->entityManager = $entityManager;
-        $this->libraryService = $libraryService;        
+        $this->libraryService = $libraryService;
     }
 
     #[Route('/', name: 'index', methods: ['GET'])]
@@ -46,6 +46,7 @@ class LibraryController extends AbstractController
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         try {
@@ -59,6 +60,7 @@ class LibraryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function update(int $id, Request $request): JsonResponse
     {
         $library = $this->libraryRepository->find($id);
@@ -78,6 +80,7 @@ class LibraryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function delete(int $id): JsonResponse
     {
         $library = $this->libraryRepository->find($id);

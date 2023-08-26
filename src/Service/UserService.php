@@ -65,6 +65,9 @@ class UserService
         if (isset($data['blocked'])) {
             $user->setBlocked($data['blocked']);
         }
+        if (isset($data['roles'])) {
+            $user->setRoles($data['roles']);
+        }
         if (isset($data['library'])) {
             $user->setLibrary($this->entityManager->getRepository(Library::class)->find($data['library']));
         }

@@ -11,7 +11,7 @@ trait UserTestHelper
         $data = [
             "first_name" => "John",
             "last_name" => "Doe",
-            "email" => "john.doe@example.com",
+            "email" => substr(bin2hex(random_bytes(10)), 0, 10) . "@example.com",
             "password" => "hashed_password",
             "address" => "123 Street",
             "city" => "City",
@@ -21,7 +21,8 @@ trait UserTestHelper
             "birth_date" => "1990-01-01",
             "library" => $libraryId,
             "reputation" => 5,
-            "blocked" => 0
+            "blocked" => 0,
+            'roles' => ['ROLE_USER', 'ROLE_ADMIN']
         ];
         $client->request('POST', '/user/', [], [], [], json_encode($data));
         return $client->getResponse();

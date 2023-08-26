@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(
-    fields: ['email'],    
+    fields: ['email'],
     message: 'Email already in use. Please try another one.',
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -94,6 +94,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull(message: "Blocked cannot be null.")]
     #[Groups("user")]
     private ?bool $blocked = null;
+
+    #[ORM\Column]
+    #[Assert\NotNull(message: "Roles cannot be null.")]
+    #[Groups("user")]
+    private array $roles = [];
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
@@ -317,8 +322,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        // You might want to adjust the roles as per your application's needs
-        return ['ROLE_USER'];
+        return $this->roles;
+    }
+
+    public function setRoles(?array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function getSalt(): ?string

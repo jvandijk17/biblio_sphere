@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Attribute\UserIsAdminOrOwner;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/user', name: 'user_')]
 class UserController extends AbstractController
@@ -26,6 +28,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/', name: 'index', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function index(): JsonResponse
     {
         $users = $this->userRepository->findAll();
@@ -40,6 +43,8 @@ class UserController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(UserIsAdminOrOwner::class, $user);
 
         return $this->json($user, Response::HTTP_FOUND, [], ['groups' => 'user']);
     }
@@ -66,6 +71,8 @@ class UserController extends AbstractController
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
+        $this->denyAccessUnlessGranted(UserIsAdminOrOwner::class, $user);
+
         try {
             $data = json_decode($request->getContent(), true);
             $user = $this->userService->saveUser($user, $data);
@@ -84,6 +91,8 @@ class UserController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(UserIsAdminOrOwner::class, $user);
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();

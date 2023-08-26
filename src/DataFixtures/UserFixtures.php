@@ -37,6 +37,7 @@ class UserFixtures extends Fixture
             'birth_date' => $faker->dateTimeBetween('-40 years', '-18 years')->format('Y-m-d'),
             'reputation' => $faker->numberBetween(0, 100),
             'blocked' => $faker->boolean,
+            'roles' => ['ROLE_USER', 'ROLE_ADMIN'],            
             'library' => $libraryReference->getId(),
         ];
 

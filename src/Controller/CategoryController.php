@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -45,6 +46,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         try {
@@ -58,6 +60,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function update(int $id, Request $request): JsonResponse
     {
         $category = $this->categoryRepository->find($id);
@@ -77,6 +80,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function delete(int $id): JsonResponse
     {
         $category = $this->categoryRepository->find($id);

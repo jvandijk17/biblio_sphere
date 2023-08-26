@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/book/category", name: 'book_category_')]
 class BookCategoryController extends AbstractController
@@ -45,6 +46,7 @@ class BookCategoryController extends AbstractController
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         try {
@@ -54,10 +56,11 @@ class BookCategoryController extends AbstractController
             return $this->json($bookCategory, Response::HTTP_CREATED, [], ['groups' => 'bookCategory']);
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }        
+        }
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function update(int $id, Request $request): JsonResponse
     {
         $bookCategory = $this->bookCategoryRepository->find($id);
@@ -77,6 +80,7 @@ class BookCategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function delete(int $id): JsonResponse
     {
         $bookCategory = $this->bookCategoryRepository->find($id);
@@ -87,7 +91,7 @@ class BookCategoryController extends AbstractController
 
         $this->entityManager->remove($bookCategory);
         $this->entityManager->flush();
-        
+
         return $this->json(['message' => 'Book category deleted'], Response::HTTP_NO_CONTENT);
     }
 }
