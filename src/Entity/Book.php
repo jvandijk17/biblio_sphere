@@ -238,7 +238,6 @@ class Book
     #[Groups("book")]
     public function getLibraryId(): ?int
     {
-        return $this->library->getId();
+        return $this->library ? $this->library->getId() : null;
     }
-
 }
