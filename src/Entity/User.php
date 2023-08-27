@@ -21,6 +21,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const VALID_ROLES = [self::ROLE_USER, self::ROLE_ADMIN];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -97,6 +102,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Roles cannot be null.")]
+    #[Assert\NotBlank(message: "Roles cannot be empty.")]
+    #[Assert\Choice(callback: "getValidRoles", multiple: true, multipleMessage: "Invalid roles provided. Accepted roles are ROLE_USER and/or ROLE_ADMIN.")]    
     #[Groups("user")]
     private array $roles = [];
 
@@ -325,10 +332,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->roles;
     }
 
+    /**
+     * @param string[]|null $roles
+     * @return static
+     */
     public function setRoles(?array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -346,5 +356,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here.
         // $this->plainPassword = null;
+    }
+
+    public static function getValidRoles(): array
+    {
+        return self::VALID_ROLES;
     }
 }
