@@ -12,6 +12,7 @@
         "doctrine/orm": "^2.15",
         "fzaninotto/faker": "^1.5",
         "lexik/jwt-authentication-bundle": "^2.18",
+        "nelmio/cors-bundle": "^2.3",
         "symfony/console": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/flex": "^2",
