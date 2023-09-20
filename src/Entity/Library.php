@@ -15,11 +15,11 @@ class Library
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("library")]
+    #[Groups(["library", "preview_library"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups("library")]
+    #[Groups(["library", "preview_library"])]
     #[Assert\NotNull(message: "Name cannot be null.")]
     #[Assert\NotBlank(message: "Name cannot be blank.")]
     private ?string $name = null;
@@ -33,7 +33,7 @@ class Library
     #[ORM\Column(length: 255)]
     #[Assert\NotNull(message: "City cannot be null.")]
     #[Assert\NotBlank(message: "City cannot be blank.")]
-    #[Groups("library")]
+    #[Groups(["library", "preview_library"])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]

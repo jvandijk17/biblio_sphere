@@ -26,14 +26,22 @@ class LibraryController extends AbstractController
         $this->libraryService = $libraryService;
     }
 
+    #[Route('/preview_libraries', name: 'preview_libraries', methods: ['GET'])]
+    public function publicLibraries(): JsonResponse
+    {
+        $libraries = $this->libraryRepository->findAll();
+        return $this->json($libraries, Response::HTTP_OK, [], ['groups' => 'preview_library']);
+    }
+
+
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $libraries = $this->libraryRepository->findAll();
+        $libraries = $this->libraryRepository->findAll();        
         return $this->json($libraries, Response::HTTP_OK, [], ['groups' => 'library']);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(int $id): JsonResponse
     {
         $library = $this->libraryRepository->find($id);

@@ -88,24 +88,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Groups("user")]
     private ?\DateTimeInterface $birth_date = null;
-
-    #[ORM\Column]
+    
     #[Assert\NotNull(message: "Reputation cannot be null.")]
     #[Assert\NotBlank(message: "Reputation cannot be blank.")]
     #[Groups("user")]
-    private ?int $reputation = null;
-
-    #[ORM\Column]
+    private ?int $reputation = 30;
+    
     #[Assert\NotNull(message: "Blocked cannot be null.")]
     #[Groups("user")]
-    private ?bool $blocked = null;
+    private ?bool $blocked = false;
 
-    #[ORM\Column]
     #[Assert\NotNull(message: "Roles cannot be null.")]
     #[Assert\NotBlank(message: "Roles cannot be empty.")]
-    #[Assert\Choice(callback: "getValidRoles", multiple: true, multipleMessage: "Invalid roles provided. Accepted roles are ROLE_USER and/or ROLE_ADMIN.")]    
+    #[Assert\Choice(callback: "getValidRoles", multiple: true, multipleMessage: "Invalid roles provided. Accepted roles are ROLE_USER and/or ROLE_ADMIN.")]
     #[Groups("user")]
-    private array $roles = [];
+    private array $roles = [self::ROLE_USER];
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]

@@ -41,6 +41,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:                
         - { path: ^/user, methods: [POST], roles: PUBLIC_ACCESS }        
+        - { path: ^/library/preview_libraries, methods: [GET], roles: PUBLIC_ACCESS }        
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
