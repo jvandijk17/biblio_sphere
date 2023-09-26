@@ -46,7 +46,7 @@ class UserController extends AbstractController
 
         $this->denyAccessUnlessGranted(UserIsAdminOrOwner::class, $user);
 
-        return $this->json($user, Response::HTTP_FOUND, [], ['groups' => 'user']);
+        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user']);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]

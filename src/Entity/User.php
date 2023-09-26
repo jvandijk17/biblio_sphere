@@ -316,6 +316,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->library->getId();
     }
 
+    /**
+     * Get the library name associated with this user.
+     *
+     * @return string|null
+     */
+    #[Groups("user")]
+    public function getLibraryName(): ?string
+    {
+        return $this->library ? $this->library->getName() : null;
+    }
+
     #[Groups("user")]
     public function getLoanIds(): array
     {
@@ -362,4 +373,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return self::VALID_ROLES;
     }
+    
 }
