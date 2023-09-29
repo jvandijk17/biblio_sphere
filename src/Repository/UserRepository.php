@@ -28,4 +28,16 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function isUserBlockedByEmail(string $email): bool
+    {
+        $blocked = $this->createQueryBuilder('u')
+            ->select('u.blocked')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $blocked === 1;
+    }
 }
