@@ -40,4 +40,16 @@ class UserRepository extends ServiceEntityRepository
 
         return $blocked === 1;
     }
+
+    public function getUserIdByEmail(string $email): int
+    {
+        $id = $this->createQueryBuilder('u')
+            ->select('u.id')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $id;
+    }
 }

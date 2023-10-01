@@ -35,7 +35,7 @@ class UserController extends AbstractController
         return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user']);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(int $id): JsonResponse
     {
         $user = $this->userRepository->find($id);
@@ -47,6 +47,18 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted(UserIsAdminOrOwner::class, $user);
 
         return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user']);
+    }
+
+    #[Route('/{email}', name: 'show_by_email', methods: ['GET'])]
+    public function show_by_email(string $email): JsonResponse
+    {
+        $userId = $this->userRepository->getUserIdByEmail($email);
+
+        if ($userId != null) {
+            return $this->show($userId);
+        }
+
+        return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
