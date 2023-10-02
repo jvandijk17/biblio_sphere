@@ -4,14 +4,14 @@ namespace App\DataFixtures;
 
 use App\Service\UserService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
 /**
- * @Order(2)
- * @DependsOn(LibraryFixtures::class)
+ * @group fixtures
  */
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements DependentFixtureInterface
 {
     private UserService $userService;
 
@@ -37,10 +37,17 @@ class UserFixtures extends Fixture
             'birth_date' => $faker->dateTimeBetween('-40 years', '-18 years')->format('Y-m-d'),
             'reputation' => $faker->numberBetween(0, 100),
             'blocked' => $faker->boolean,
-            'roles' => ['ROLE_USER', 'ROLE_ADMIN'],            
+            'roles' => ['ROLE_USER', 'ROLE_ADMIN'],
             'library' => $libraryReference->getId(),
         ];
 
         $this->userService->saveUser(null, $userData);
+    }
+
+    public function getDependencies()
+    {
+        return [
+            LibraryFixtures::class,
+        ];
     }
 }

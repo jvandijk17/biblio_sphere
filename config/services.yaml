@@ -42,5 +42,15 @@ services:
                   method: "onKernelException",
               }
 
+    App\DataFixtures\LibraryFixtures:
+        tags:
+            - { name: "doctrine.fixture.orm" }
+    App\DataFixtures\UserFixtures:
+        tags:
+            - { name: "doctrine.fixture.orm" }
+    App\DataFixtures\BookFixtures:
+        tags:
+            - { name: "doctrine.fixture.orm" }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

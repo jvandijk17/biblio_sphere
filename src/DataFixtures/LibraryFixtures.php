@@ -8,7 +8,7 @@ use App\Service\LibraryService;
 use Faker\Factory;
 
 /**
- * @Order(1)
+ * @group fixtures
  */
 class LibraryFixtures extends Fixture
 {
