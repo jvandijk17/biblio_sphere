@@ -42,10 +42,10 @@ class BookService
         }
         if(isset($data["page_count"])) {
             $book->setPageCount($data['page_count']);
-        }
-        if(isset($data["library_id"])) {
-            $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data["library_id"]));
         }        
+        if (isset($data['library'])) {
+            $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data['library']));
+        }
 
         $errors = $this->validator->validate($book);
 

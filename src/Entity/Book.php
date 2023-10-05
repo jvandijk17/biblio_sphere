@@ -56,6 +56,7 @@ class Book
     private ?int $page_count = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Library $library = null;
 
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Loan::class)]
@@ -160,6 +161,17 @@ class Book
     }
 
     /**
+     * Get the library name associated with this book.
+     *
+     * @return string|null
+     */
+    #[Groups("book")]
+    public function getLibraryName(): ?string
+    {
+        return $this->library ? $this->library->getName() : null;
+    }
+
+    /**
      * @return Collection<int, Loan>
      */
     public function getLoans(): Collection
@@ -238,6 +250,6 @@ class Book
     #[Groups("book")]
     public function getLibraryId(): ?int
     {
-        return $this->library ? $this->library->getId() : null;
+        return $this->library->getId();
     }
 }
