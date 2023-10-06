@@ -171,6 +171,12 @@ class Book
         return $this->library ? $this->library->getName() : null;
     }
 
+    #[Groups("book")]
+    public function getLibraryId(): ?int
+    {
+        return $this->library->getId();
+    }
+
     /**
      * @return Collection<int, Loan>
      */
@@ -240,16 +246,18 @@ class Book
     }
 
     #[Groups("book")]
+    public function getBookCategoryNames(): array
+    {
+        return $this->bookCategories->map(function ($bookCategory) {
+            return $bookCategory->getCategory()->getName();
+        })->toArray();
+    }
+
+    #[Groups("book")]
     public function getLoanIds(): array
     {
         return $this->loans->map(function ($loan) {
             return $loan->getId();
         })->toArray();
-    }
-
-    #[Groups("book")]
-    public function getLibraryId(): ?int
-    {
-        return $this->library->getId();
     }
 }

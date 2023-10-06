@@ -14,34 +14,53 @@ use Faker\Factory;
 class BookFixtures extends Fixture implements DependentFixtureInterface
 {
     private BookService $bookService;
+    private \Faker\Generator $faker;
 
     public function __construct(BookService $bookService)
     {
         $this->bookService = $bookService;
+        $this->faker = Factory::create();
     }
 
     public function load(ObjectManager $manager)
     {
-        $faker = Factory::create();
-
         $libraryReference = $this->getReference('default-library');
+        $bookList = $this->createBooks($libraryReference);
 
+        $this->addBookReferences($bookList);
+    }
+
+    private function createBooks($libraryReference): array
+    {
+        $bookList = [];
         for ($i = 0; $i < 20; $i++) {
+            $bookData = $this->generateBookAttributes($libraryReference);
+            $book = $this->bookService->saveBook(null, $bookData);
+            $bookList[] = $book;
+        }
+        return $bookList;
+    }
 
-            $titleWords = $faker->words(5);
-            $title = implode(' ', $titleWords);
+    private function generateBookAttributes($libraryReference): array
+    {
+        $titleWords = $this->faker->words(5);
+        $title = implode(' ', $titleWords);
 
-            $bookData = [
-                'title' => $title,
-                'author' => $faker->name,
-                'publisher' => $faker->company,
-                'isbn' => $faker->isbn13,
-                'publication_year' => $faker->dateTimeBetween('-100 years', 'now')->format('Y-m-d'),
-                'page_count' => $faker->numberBetween(50, 1000),
-                'library' => $libraryReference->getId(),
-            ];
+        return [
+            'title' => $title,
+            'author' => $this->faker->name,
+            'publisher' => $this->faker->company,
+            'isbn' => $this->faker->isbn13,
+            'publication_year' => $this->faker->dateTimeBetween('-100 years', 'now')->format('Y-m-d'),
+            'page_count' => $this->faker->numberBetween(50, 1000),
+            'library' => $libraryReference->getId(),
+        ];
+    }
 
-            $this->bookService->saveBook(null, $bookData);
+    private function addBookReferences(array $bookList): void
+    {
+        foreach ($bookList as $index => $book) {
+            $this->addReference('book-' . $index, $book);
         }
     }
 
