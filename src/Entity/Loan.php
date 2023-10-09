@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LoanRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Validator\BookNotRented;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,7 +16,7 @@ class Loan
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups("loan")]
-    private ?int $id = null;    
+    private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "Loan Date cannot be null.")]
@@ -37,6 +38,7 @@ class Loan
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Book cannot be null, make sure that the provided book exists in the database.")]
     #[Assert\NotBlank(message: "Book cannot be blank, make sure that the provided book exists in the database.")]
+    #[BookNotRented]
     private ?Book $book = null;
 
     public function getId(): ?int
@@ -103,5 +105,4 @@ class Loan
     {
         return $this->user->getId();
     }
-
 }

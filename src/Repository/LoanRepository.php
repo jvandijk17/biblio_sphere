@@ -23,9 +23,23 @@ class LoanRepository extends ServiceEntityRepository
 
     public function findMaxId()
     {
-        return $this->createQueryBuilder('r')
-            ->select('MAX(r.id)')
+        return $this->createQueryBuilder('l')
+            ->select('MAX(l.id)')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function loanExistsForBookAndUser($bookId, $userId): bool
+    {
+        $count = $this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->where('l.book = :bookId')
+            ->andWhere('l.user = :userId')
+            ->setParameter('bookId', $bookId)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
     }
 }
