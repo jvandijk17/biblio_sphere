@@ -254,6 +254,15 @@ class Book
     }
 
     #[Groups("book")]
+    public function getActiveLoanIds(): array
+    {
+        return $this->loans->filter(function (Loan $loan) {
+            return $loan->getBookIfNotReturned() !== null;
+        })->map(function (Loan $loan) {
+            return $loan->getId();
+        })->toArray();
+    }
+
     public function getLoanIds(): array
     {
         return $this->loans->map(function ($loan) {

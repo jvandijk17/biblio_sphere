@@ -44,7 +44,7 @@ class LoanController extends AbstractController
             return $this->json(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($loan, Response::HTTP_FOUND, [], ['groups' => 'loan']);
+        return $this->json($loan, Response::HTTP_OK, [], ['groups' => 'loan']);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]

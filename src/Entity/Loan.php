@@ -105,4 +105,9 @@ class Loan
     {
         return $this->user->getId();
     }
+
+    public function getBookIfNotReturned(): ?Book
+    {
+        return $this->return_date === null ? $this->book : null;
+    }
 }
