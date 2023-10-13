@@ -16,13 +16,13 @@ class BookNotRentedValidator extends ConstraintValidator
         $this->em = $em;
     }
 
-    public function validate($loan, Constraint $constraint)
+    public function validate($book, Constraint $constraint)
     {
-        if (null === $loan || '' === $loan) {
+        if (null === $book || '' === $book) {
             return;
         }
 
-        $bookId = $loan->getBook()->getId();
+        $bookId = $book->getId();
 
         $existingLoan = $this->em->getRepository(Loan::class)->findOneBy([
             'book' => $bookId,

@@ -15,7 +15,7 @@ class Library
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["library", "preview_library"])]
+    #[Groups(["library_secret", "preview_library"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

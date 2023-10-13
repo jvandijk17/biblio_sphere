@@ -16,35 +16,39 @@ class LoanService
     public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
-        $this->validator = $validator;       
+        $this->validator = $validator;
     }
 
     public function saveLoan(?Loan $loan, array $data): Loan
     {
-        if(!$loan) {
+        $validationGroups = [];
+
+        if (!$loan) {
             $loan = new Loan();
             $loan->setLoanDate(new \DateTime());
             $this->entityManager->persist($loan);
+            $validationGroups[] = 'Create';
         }
 
-        if(isset($data["user"])) {
+        if (isset($data["user"])) {
             $loan->setUser($this->entityManager->getRepository(User::class)->find($data["user"]));
-        }        
-        if(isset($data["book"])) {
+        }
+        if (isset($data["book"])) {
             $loan->setBook($this->entityManager->getRepository(Book::class)->find($data["book"]));
         }
-        if(isset($data["return_date"])) {
+        if (isset($data["return_date"]) && $loan->getReturnDate() === null) {
             $loan->setReturnDate(new \DateTime($data["return_date"]));
-        }        
+        } else if (isset($data["return_date"])) {
+            throw new \InvalidArgumentException('Loan already returned.');
+        }
 
-        $errors = $this->validator->validate($loan);
-        if(count($errors) > 0) {
+        $errors = $this->validator->validate($loan, null, $validationGroups);
+        if (count($errors) > 0) {
             throw new \InvalidArgumentException('Invalid loan data: ' . (string) $errors);
         }
 
         $this->entityManager->flush();
 
         return $loan;
-
     }
 }

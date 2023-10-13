@@ -31,54 +31,33 @@ class LoanController extends AbstractController
     public function index(): JsonResponse
     {
         $loans = $this->loanRepository->findAll();
-        return $this->json($loans, Response::HTTP_OK, [], ['groups' => 'loan']);
+        return $this->json($loans, Response::HTTP_OK, [], ['groups' => $this->getSerializationGroups()]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    #[IsGranted("ROLE_ADMIN")]
     public function show(int $id): JsonResponse
     {
         $loan = $this->loanRepository->find($id);
 
-        if(!$loan) {
-            return $this->json(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
+        if (!$loan) {
+            return $this->errorResponse('Loan not found');
         }
 
-        return $this->json($loan, Response::HTTP_OK, [], ['groups' => 'loan']);
+        return $this->json($loan, Response::HTTP_OK, [], ['groups' => $this->getSerializationGroups()]);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
     #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
-        try {
-            $data = json_decode($request->getContent(), true);
-            $loan = $this->loanService->saveLoan(null, $data);
-
-            return $this->json($loan, Response::HTTP_CREATED, [], ['groups' => 'loan']);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        return $this->saveOrUpdateLoan(null, $request);
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
     #[IsGranted("ROLE_ADMIN")]
     public function update(int $id, Request $request): JsonResponse
     {
-        $loan = $this->loanRepository->find($id);
-
-        if (!$loan) {
-            return $this->json(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        try {
-            $data = json_decode($request->getContent(), true);
-            $loan = $this->loanService->saveLoan($loan, $data);
-
-            return $this->json($loan, Response::HTTP_OK, [], ['groups' => 'loan']);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
+        return $this->saveOrUpdateLoan($id, $request);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
@@ -87,13 +66,47 @@ class LoanController extends AbstractController
     {
         $loan = $this->loanRepository->find($id);
 
-        if(!$loan) {
-            return $this->json(['error' => 'Loan not found'], Response::HTTP_NOT_FOUND);
+        if (!$loan) {
+            return $this->errorResponse('Loan not found');
         }
 
         $this->entityManager->remove($loan);
         $this->entityManager->flush();
 
         return $this->json(['message' => 'Loan deleted'], Response::HTTP_NO_CONTENT);
+    }
+
+    private function saveOrUpdateLoan(?int $id, Request $request): JsonResponse
+    {
+        $loan = $id ? $this->loanRepository->find($id) : null;
+
+        if ($id && !$loan) {
+            return $this->errorResponse('Loan not found');
+        }
+
+        try {
+            $data = json_decode($request->getContent(), true);
+            $loan = $this->loanService->saveLoan($loan, $data);
+
+            return $this->json($loan, $id ? Response::HTTP_OK : Response::HTTP_CREATED, [], ['groups' => 'loan']);
+        } catch (\InvalidArgumentException $e) {
+            return $this->errorResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    private function getSerializationGroups(): array
+    {
+        $groups = ['loan'];
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $groups[] = 'loan_secret';
+        }
+
+        return $groups;
+    }
+
+    private function errorResponse(string $message, int $status = Response::HTTP_NOT_FOUND): JsonResponse
+    {
+        return $this->json(['error' => $message], $status);
     }
 }

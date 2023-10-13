@@ -28,6 +28,10 @@ class Loan
     #[Groups("loan")]
     private ?\DateTimeInterface $return_date = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("loan")]
+    private ?\DateTimeInterface $estimated_return_date = null;
+
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "User cannot be null, make sure that the provided user exists in the database.")]
@@ -38,7 +42,7 @@ class Loan
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Book cannot be null, make sure that the provided book exists in the database.")]
     #[Assert\NotBlank(message: "Book cannot be blank, make sure that the provided book exists in the database.")]
-    #[BookNotRented]
+    #[BookNotRented(groups: ["Create"])]
     private ?Book $book = null;
 
     public function getId(): ?int
@@ -55,7 +59,16 @@ class Loan
     {
         $this->loan_date = $loan_date;
 
+        /** @var \DateTime $loan_date */
+        $this->estimated_return_date = (clone $loan_date)->modify('+30 days');
+
         return $this;
+    }
+
+    #[Groups("loan")]
+    public function getEstimatedReturnDate(): ?\DateTimeInterface
+    {
+        return $this->estimated_return_date;
     }
 
     public function getReturnDate(): ?\DateTimeInterface
@@ -94,13 +107,13 @@ class Loan
         return $this;
     }
 
-    #[Groups("loan")]
+    #[Groups("loan_secret")]
     public function getBookId(): ?int
     {
         return $this->book->getId();
     }
 
-    #[Groups("loan")]
+    #[Groups("loan_secret")]
     public function getUserId(): ?int
     {
         return $this->user->getId();

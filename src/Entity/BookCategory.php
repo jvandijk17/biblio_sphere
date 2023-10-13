@@ -13,7 +13,7 @@ class BookCategory
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("bookCategory")]
+    #[Groups("bookCategory_secret")]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'bookCategories')]
