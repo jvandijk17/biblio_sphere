@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\LoanRepository;
+use App\Repository\UserRepository;
 use App\Service\LoanService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,11 +18,13 @@ class LoanController extends AbstractController
 {
     private LoanRepository $loanRepository;
     private EntityManagerInterface $entityManager;
+    private UserRepository $userRepository;
     private LoanService $loanService;
 
-    public function __construct(LoanRepository $loanRepository, EntityManagerInterface $entityManager, LoanService $loanService)
+    public function __construct(LoanRepository $loanRepository, EntityManagerInterface $entityManager, LoanService $loanService, UserRepository $userRepository)
     {
         $this->loanRepository = $loanRepository;
+        $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->loanService = $loanService;
     }
@@ -45,6 +48,23 @@ class LoanController extends AbstractController
 
         return $this->json($loan, Response::HTTP_OK, [], ['groups' => $this->getSerializationGroups()]);
     }
+
+    #[Route('/by-user/{userId}', name: 'by_user', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
+    public function getByUserId(int $userId): JsonResponse
+    {
+        $user = $this->userRepository->find($userId);
+        if (!$user) {
+            return $this->errorResponse('User not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $loans = $this->loanRepository->findBy(['user' => $userId, 'return_date' => null]);
+
+        return $this->json($loans, Response::HTTP_OK, [], ['groups' => $this->getSerializationGroups()]);
+    }
+
+
+
 
     #[Route('/', name: 'create', methods: ['POST'])]
     #[IsGranted("ROLE_ADMIN")]
