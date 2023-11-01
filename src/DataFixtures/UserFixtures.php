@@ -42,7 +42,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             'email' => $_ENV['JWT_TEST_MAIL'],
             'password' => $_ENV['JWT_TEST_PASS'],
             'roles' => ['ROLE_USER', 'ROLE_ADMIN'],
-            'blocked' => $this->faker->boolean
+            'blocked' => false
         ]);
     }
 

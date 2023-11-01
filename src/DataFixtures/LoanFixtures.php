@@ -50,10 +50,14 @@ class LoanFixtures extends Fixture implements DependentFixtureInterface
                     $loan->setUser($user);
                     $loan->setBook($book);
 
+                    if ($loan->getReturnDate() && $loan->getReturnDate() < $loan->getLoanDate()) {
+                        $loan->setReturnDate(null);
+                    }
+
                     $manager->persist($loan);
                     $successes++;
                 } catch (\Exception $e) {
-                    echo $e->getMessage();
+                    throw new \Exception($e);
                 }
             }
             $attempts++;
