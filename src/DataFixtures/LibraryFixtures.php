@@ -23,17 +23,19 @@ class LibraryFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        $libraryData = [
-            'name' => $faker->company,
-            'address' => $faker->streetAddress,
-            'city' => $faker->city,
-            'province' => $faker->state,
-            'postal_code' => $faker->postcode,
-        ];
+        for ($i = 0; $i < 5; $i++) {
+            $libraryData = [
+                'name' => $faker->company,
+                'address' => $faker->streetAddress,
+                'city' => $faker->city,
+                'province' => $faker->state,
+                'postal_code' => $faker->postcode,
+            ];
 
-        $library = $this->libraryService->saveLibrary(null, $libraryData);
-        $manager->flush();
+            $library = $this->libraryService->saveLibrary(null, $libraryData);
+            $this->addReference('library-' . $i, $library);
 
-        $this->addReference('default-library', $library);
+            $manager->flush();
+        }
     }
 }

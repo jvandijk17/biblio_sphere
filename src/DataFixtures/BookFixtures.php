@@ -15,6 +15,7 @@ class BookFixtures extends Fixture implements DependentFixtureInterface
 {
     private BookService $bookService;
     private \Faker\Generator $faker;
+    private $libraries;
 
     public function __construct(BookService $bookService)
     {
@@ -24,24 +25,25 @@ class BookFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        $libraryReference = $this->getReference('default-library');
-        $bookList = $this->createBooks($libraryReference);
+        $this->libraries = $this->getLibraryReferences();
+
+        $bookList = $this->createBooks();
 
         $this->addBookReferences($bookList);
     }
 
-    private function createBooks($libraryReference): array
+    private function createBooks(): array
     {
         $bookList = [];
         for ($i = 0; $i < 20; $i++) {
-            $bookData = $this->generateBookAttributes($libraryReference);
+            $bookData = $this->generateBookAttributes();
             $book = $this->bookService->saveBook(null, $bookData);
             $bookList[] = $book;
         }
         return $bookList;
     }
 
-    private function generateBookAttributes($libraryReference): array
+    private function generateBookAttributes(): array
     {
         $titleWords = $this->faker->words(5);
         $title = implode(' ', $titleWords);
@@ -53,8 +55,17 @@ class BookFixtures extends Fixture implements DependentFixtureInterface
             'isbn' => $this->faker->isbn13,
             'publication_year' => $this->faker->dateTimeBetween('-100 years', 'now')->format('Y-m-d'),
             'page_count' => $this->faker->numberBetween(50, 1000),
-            'library' => $libraryReference->getId(),
+            'library' => $this->libraries[array_rand($this->libraries)]->getId(),
         ];
+    }
+
+    private function getLibraryReferences(): array
+    {
+        $libraries = [];
+        for ($i = 0; $i < 5; $i++) {
+            $libraries[] = $this->getReference('library-' . $i);
+        }
+        return $libraries;
     }
 
     private function addBookReferences(array $bookList): void
