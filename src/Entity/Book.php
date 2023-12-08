@@ -59,10 +59,10 @@ class Book
     #[ORM\JoinColumn(nullable: false)]
     private ?Library $library = null;
 
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Loan::class)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Loan::class, cascade: ['remove'])]
     private Collection $loans;
 
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCategory::class)]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: BookCategory::class, cascade: ['remove'])]
     private Collection $bookCategories;
 
     public function __construct()
