@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route("/book", name: 'book_')]
 class BookController extends AbstractController
@@ -43,7 +44,7 @@ class BookController extends AbstractController
         }
 
         $groups = $this->getSerializationGroups();
-        return $this->json($book, Response::HTTP_FOUND, [], ['groups' => $groups]);
+        return $this->json($book, Response::HTTP_OK, [], ['groups' => $groups]);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]

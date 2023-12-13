@@ -108,7 +108,7 @@ class LoanController extends AbstractController
             $data = json_decode($request->getContent(), true);
             $loan = $this->loanService->saveLoan($loan, $data);
 
-            return $this->json($loan, $id ? Response::HTTP_OK : Response::HTTP_CREATED, [], ['groups' => 'loan']);
+            return $this->json($loan, $id ? Response::HTTP_OK : Response::HTTP_CREATED, [], ['groups' => $this->getSerializationGroups()]);
         } catch (\InvalidArgumentException $e) {
             return $this->errorResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
