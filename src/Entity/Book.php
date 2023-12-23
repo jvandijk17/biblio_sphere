@@ -198,7 +198,6 @@ class Book
     public function removeLoan(Loan $loan): static
     {
         if ($this->loans->removeElement($loan)) {
-            // set the owning side to null (unless already changed)
             if ($loan->getBook() === $this) {
                 $loan->setBook(null);
             }
@@ -228,7 +227,6 @@ class Book
     public function removeBookCategory(BookCategory $bookCategory): static
     {
         if ($this->bookCategories->removeElement($bookCategory)) {
-            // set the owning side to null (unless already changed)
             if ($bookCategory->getBook() === $this) {
                 $bookCategory->setBook(null);
             }

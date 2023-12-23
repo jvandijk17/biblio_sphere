@@ -46,6 +46,9 @@ class BookService
         if (isset($data['library'])) {
             $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data['library']));
         }
+        if (isset($data['libraryId'])) {
+            $book->setLibrary($this->entityManager->getRepository(Library::class)->find($data['libraryId']));
+        }
 
         $errors = $this->validator->validate($book);
 
