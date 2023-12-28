@@ -24,7 +24,7 @@ class Category
     #[Groups("category")]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: BookCategory::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: BookCategory::class, cascade: ['remove'])]
     private Collection $bookCategories;
 
     public function __construct()
@@ -83,7 +83,7 @@ class Category
     #[Groups("category")]
     public function getBookCategoryIds(): array
     {
-        return $this->bookCategories->map(function ($bookCategory){
+        return $this->bookCategories->map(function ($bookCategory) {
             return $bookCategory->getId();
         })->toArray();
     }
