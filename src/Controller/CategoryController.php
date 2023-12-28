@@ -44,7 +44,7 @@ class CategoryController extends AbstractController
         }
 
         $groups = $this->getSerializationGroups();
-        return $this->json($category, Response::HTTP_FOUND, [], ['groups' => $groups]);
+        return $this->json($category, Response::HTTP_OK, [], ['groups' => $groups]);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
