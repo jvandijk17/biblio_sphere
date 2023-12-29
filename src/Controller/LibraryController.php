@@ -51,7 +51,7 @@ class LibraryController extends AbstractController
         }
 
         $groups = $this->getSerializationGroups();
-        return $this->json($library, Response::HTTP_FOUND, [], ['groups' => $groups]);
+        return $this->json($library, Response::HTTP_OK, [], ['groups' => $groups]);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
