@@ -146,7 +146,6 @@ class Library
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
             if ($user->getLibrary() === $this) {
                 $user->setLibrary(null);
             }
@@ -176,7 +175,6 @@ class Library
     public function removeBook(Book $book): static
     {
         if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
             if ($book->getLibrary() === $this) {
                 $book->setLibrary(null);
             }

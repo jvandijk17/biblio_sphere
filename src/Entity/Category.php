@@ -70,7 +70,6 @@ class Category
     public function removeBookCategory(BookCategory $bookCategory): static
     {
         if ($this->bookCategories->removeElement($bookCategory)) {
-            // set the owning side to null (unless already changed)
             if ($bookCategory->getCategory() === $this) {
                 $bookCategory->setCategory(null);
             }

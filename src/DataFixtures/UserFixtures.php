@@ -29,11 +29,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         $this->libraries = $this->getLibraryReferences();
 
-        // Create JWT user
         $jwtUserData = $this->createJwtUserData();
         $this->userService->saveUser(null, $jwtUserData);
 
-        // Create 19 random users
         for ($i = 0; $i < 19; $i++) {
             $randomUserData = $this->createRandomUserData();
             $this->userService->saveUser(null, $randomUserData);
