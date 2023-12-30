@@ -39,6 +39,9 @@ class LoanService
         if (isset($data["book"])) {
             $loan->setBook($this->entityManager->getRepository(Book::class)->find($data["book"]));
         }
+        if (isset($data["status"])) {
+            $loan->setStatus($data["status"]);
+        }
         if (isset($data["return_date"]) && $loan->getReturnDate() === null) {
             $loan->setReturnDate(new \DateTime($data["return_date"]));
         } else if (isset($data["return_date"])) {
