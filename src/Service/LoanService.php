@@ -19,7 +19,7 @@ class LoanService
         $this->validator = $validator;
     }
 
-    public function saveLoan(?Loan $loan, array $data): Loan
+    public function saveLoan(?Loan $loan, array $data, $isAdmin): Loan
     {
         $validationGroups = [];
 
@@ -28,6 +28,9 @@ class LoanService
             $loan->setLoanDate(new \DateTime());
             $this->entityManager->persist($loan);
             $validationGroups[] = 'Create';
+            if (!$isAdmin) {
+                $loan->setStatus('pending');
+            }
         }
 
         if (isset($data["user"])) {

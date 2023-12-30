@@ -54,6 +54,12 @@ class LoanFixtures extends Fixture implements DependentFixtureInterface
                         $loan->setReturnDate(null);
                     }
 
+                    if ($loan->getReturnDate() !== null && $loan->getReturnDate() < new \DateTime()) {
+                        $loan->setStatus("returned");
+                    } else {
+                        $loan->setStatus("accepted");
+                    }
+
                     $manager->persist($loan);
                     $successes++;
                 } catch (\Exception $e) {

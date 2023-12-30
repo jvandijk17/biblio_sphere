@@ -16,7 +16,7 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups("book_secret")]
+    #[Groups("book")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

@@ -67,11 +67,11 @@ class LoanController extends AbstractController
 
 
     #[Route('/', name: 'create', methods: ['POST'])]
-    #[IsGranted("ROLE_ADMIN")]
     public function create(Request $request): JsonResponse
     {
         return $this->saveOrUpdateLoan(null, $request);
     }
+
 
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
     #[IsGranted("ROLE_ADMIN")]
@@ -106,7 +106,12 @@ class LoanController extends AbstractController
 
         try {
             $data = json_decode($request->getContent(), true);
-            $loan = $this->loanService->saveLoan($loan, $data);
+
+            if (!isset($data["user"])) {
+                $data["user"] = $this->getUser();
+            }
+
+            $loan = $this->loanService->saveLoan($loan, $data, $this->isGranted("ROLE_ADMIN"));
 
             return $this->json($loan, $id ? Response::HTTP_OK : Response::HTTP_CREATED, [], ['groups' => $this->getSerializationGroups()]);
         } catch (\InvalidArgumentException $e) {

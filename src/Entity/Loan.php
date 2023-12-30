@@ -32,6 +32,13 @@ class Loan
     #[Groups("loan")]
     private ?\DateTimeInterface $estimated_return_date = null;
 
+    #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Assert\NotNull(message: "Loan Status cannot be null.")]
+    #[Assert\NotBlank(message: "Loan Status cannot be blank.")]
+    #[Assert\Choice(choices: ['pending', 'accepted', 'returned'], message: 'Invalid loan status.')]
+    #[Groups("loan")]
+    private ?string $status = 'pending';
+
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "User cannot be null, make sure that the provided user exists in the database.")]
@@ -79,6 +86,21 @@ class Loan
     public function setReturnDate(?\DateTimeInterface $return_date): static
     {
         $this->return_date = $return_date;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        if (!in_array($status, ['pending', 'accepted', 'returned'])) {
+            throw new \InvalidArgumentException('Invalid loan status.');
+        }
+        $this->status = $status;
 
         return $this;
     }
