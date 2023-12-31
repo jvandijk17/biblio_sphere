@@ -1,6 +1,5 @@
 # Bibliosphere: Advanced Library Management System
 
-#### Video Demo: [URL HERE]
 #### Description:
 
 Bibliosphere is an advanced library management system developed as a backend service using Symfony, a PHP framework. It's designed to streamline and modernize library operations, handling tasks such as book and category management, user registrations, loan processing, and library data administration.
